@@ -40,6 +40,13 @@ module.exports = {
           transpileOnly: true,
           experimentalWatchApi: true,
         },
+        resolve: {
+          extensions: ['.ts', '.js'],
+          alias: {
+            "src": path.resolve(__dirname, "src"),
+            "lib": path.resolve(__dirname, "lib"),
+          }
+        }
       },
     ],
   },
