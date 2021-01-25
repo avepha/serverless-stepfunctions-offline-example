@@ -64,7 +64,7 @@ const serverlessConfiguration: AWS & {stepFunctions?: any} = {
       name: getResourceName('invokeStepFunctions'),
       handler: 'src/lambda/step-functions.invokeStepFunctions',
       environment: {
-        stepFunctionArn:
+        STEP_FUNCTIONS_ARN:
           '${self:custom.stepFunctionsArnPrefix}' +
           getResourceName('MyStateMachine'),
       },

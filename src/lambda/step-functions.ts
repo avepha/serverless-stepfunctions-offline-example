@@ -1,8 +1,13 @@
 import {Handler} from 'aws-lambda'
-import {startExecution} from '../lib/aws/step-functions'
+import stepFunctions from '../lib/aws/step-functions'
 
 export const invokeStepFunctions: Handler = async _ => {
-  await startExecution({}, process.env.stepFunctionArn)
+  const input = JSON.stringify({input: 'input_message'})
+  await stepFunctions.startExecution({
+    input,
+    // define this to local env of lambda function
+    stateMachineArn: process.env.STEP_FUNCTIONS_ARN
+  }).promise()
 }
 
 export const callExternalApi: Handler = async event => {
