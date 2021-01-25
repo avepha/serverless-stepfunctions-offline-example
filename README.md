@@ -90,3 +90,38 @@ plugins: [
         }
       }
     ```
+
+
+## Start execute step functions in lambda function
+
+```jsx
+import {Handler} from 'aws-lambda'
+import {StepFunctions} from 'aws-sdk'
+
+const stepFunctions = new StepFunctions({
+  ...(process.env.NODE_ENV === 'development' && {endpoint: ':4030', sslEnabled: false})
+})
+
+export const invokeStepFunctions: Handler = async _ => {
+  const input = JSON.stringify({input: 'input_message'})
+  await stepFunctions.startExecution({
+    input,
+    // define this to local env of lambda function
+    stateMachineArn: process.env.STEP_FUNCTIONS_ARN
+  }).promise()
+}
+```
+
+```jsx
+functions: {
+  ...
+  invokeStepFunctions: {
+    name: getResourceName('invokeStepFunctions'),
+      handler: 'src/lambda/step-functions.invokeStepFunctions',
+      environment: {
+      STEP_FUNCTIONS_ARN: '' // add stepfunction arn here 
+    }
+  },
+  ...
+},
+```
