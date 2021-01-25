@@ -84,7 +84,3 @@ plugins: [
         }
       }
     ```
-
-## Example
-
-- [Using step functions offline](https://github.com/Brikl/shop-server)
