@@ -3,10 +3,16 @@
 AWS Step Functions is a serverless function orchestrator that makes it easy to sequence AWS Lambda functions [(see more)](https://aws.amazon.com/step-functions)
 
 ## Getting started
+### setup
 ```
 yarn install
 yarn dev
 ```
+### invoke step functions
+```
+curl http://localhost:3000/local/invoke-stepfunctions
+```
+
 
 ## Serverless Plugins
 
