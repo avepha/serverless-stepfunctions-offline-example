@@ -44,9 +44,8 @@ const serverlessConfiguration: AWS & {stepFunctions?: any} = {
         Effect: 'Allow',
         Action: ['lambda:InvokeFunction'],
         Resource: [
-          `arn:aws:lambda:*:*:function:${getResourceName(
-            'invokeStepFunctions'
-          )}`,
+          `arn:aws:lambda:*:*:function:${getResourceName('invokeStepFunctions')}`,
+          `arn:aws:lambda:*:*:function:${getResourceName('callExternalApi')}`,
           `arn:aws:lambda:*:*:function:${getResourceName('logError')}`,
         ],
       },
@@ -54,35 +53,26 @@ const serverlessConfiguration: AWS & {stepFunctions?: any} = {
         Effect: 'Allow',
         Action: ['states:StartExecution'],
         Resource: [
-          `arn:aws:states:*:*:stateMachine:${getResourceName('StateMachine')}`
+          `arn:aws:states:*:*:stateMachine:${getResourceName('MyStateMachine')}`
         ],
       }
     ]
+  
   },
   functions: {
-    createOrder: {
-      handler: 'src/lambda/step-functions.createOrder',
-      name: getResourceName('createOrder'),
-      events: [
-        {http: {path: '/create-order', method: 'get'}}
-      ],
-      environment: {
-        stateMachine: ''
-      }
-    },
-    callExternalApi: {
-      name: getResourceName('callExternalApi'),
-      handler: 'src/lambda/step-functions.callExternalApi',
-    },
     invokeStepFunctions: {
       name: getResourceName('invokeStepFunctions'),
       handler: 'src/lambda/step-functions.invokeStepFunctions',
       environment: {
         stepFunctionArn:
           '${self:custom.stepFunctionsArnPrefix}' +
-          getResourceName('StateMachine'),
+          getResourceName('MyStateMachine'),
       },
       events: [{ http: { path: '/invoke-stepfunctions', method: 'get' } }],
+    },
+    callExternalApi: {
+      name: getResourceName('callExternalApi'),
+      handler: 'src/lambda/step-functions.callExternalApi',
     },
     logError: {
       name: getResourceName('logError'),
@@ -91,10 +81,10 @@ const serverlessConfiguration: AWS & {stepFunctions?: any} = {
   },
   stepFunctions: {
     stateMachines: {
-      CreateOrderStateMachine: {
-        name: getResourceName('StateMachine'),
+      MyStateMachine: {
+        name: getResourceName('MyStateMachine'),
         definition: {
-          Comment: 'Create order step functions',
+          Comment: 'MyStateMachine definition',
           StartAt: 'CallExternalApi',
           States: {
             CallExternalApi: {
@@ -104,7 +94,6 @@ const serverlessConfiguration: AWS & {stepFunctions?: any} = {
                 {
                   ErrorEquals: ['States.ALL'],
                   IntervalSeconds: 2,
-                  BackoffRate: 2.0,
                   MaxAttempts: 4,
                 },
               ],
@@ -122,6 +111,6 @@ const serverlessConfiguration: AWS & {stepFunctions?: any} = {
         },
       },
     }
-  },
+  }
 }
 module.exports = serverlessConfiguration
